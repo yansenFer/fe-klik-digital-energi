@@ -1,5 +1,5 @@
 'use client'
-import { setActiveTab } from '@/lib/features/sidebarSlice'
+import { setActiveTab, setIsMobileMenuOpen } from '@/lib/features/sidebarSlice'
 import { Tabs, TabsContent } from '@radix-ui/react-tabs'
 import HeaderLayout from '../molecules/HeaderLayout'
 import SidebarLayout from '../molecules/SidebarLayout'
@@ -13,6 +13,9 @@ type AppLayoutProps = {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const dispatch = useDispatch()
+  const isMobileMenuOpen = useSelector(
+    (state: RootState) => state.sidebarReducer.isMobileMenuOpen
+  )
   const activeTab = useSelector(
     (state: RootState) => state.sidebarReducer.activeTab
   )
@@ -21,11 +24,17 @@ export default function AppLayout({ children }: AppLayoutProps) {
     <div className="min-h-screen bg-background">
       <HeaderLayout />
 
-      <div className="flex">
+      <div className="flex relative">
+        {isMobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
+            onClick={() => dispatch(setIsMobileMenuOpen(false))}
+          />
+        )}
         <SidebarLayout />
 
         {/* Content Area */}
-        <main className="flex-1 justify-center items-center p-6">
+        <main className="flex-1 p-6 md:ml-0">
           <Tabs
             value={activeTab}
             onValueChange={(e) => dispatch(setActiveTab(e))}
